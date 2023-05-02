@@ -1,4 +1,7 @@
+from datetime import datetime
+
 from django.db import models
+from django.core.validators import MaxValueValidator
 
 
 class Category(models.Model):
@@ -33,8 +36,10 @@ class Title(models.Model):
         max_length=256,
         verbose_name='Название произведения'
     )
-    year = models.IntegerField(verbose_name='Год выпуска')
-    # добавить валидацию года выпуска
+    year = models.IntegerField(
+        blank=True,
+        validator=[MaxValueValidator(int(datetime.now().year))],
+        verbose_name='Год выпуска')
     description = models.TextField(
         blank=True,
         null=True,
