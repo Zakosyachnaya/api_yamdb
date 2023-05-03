@@ -9,7 +9,7 @@ from users.models import User
 
 from ..api.serializers import (CommentSerializer, ReviewSerializer,
                                SignupSerializer, UserSerializer)
-from .models import Review
+from reviews.models import Review
 
 
 class UserViewSet(viewsets.ModelViewSet):
