@@ -1,16 +1,15 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import AccessToken
+# from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework.views import APIView
 from users.models import User
 
 
 from ..api.serializers import (CommentSerializer, ReviewSerializer,
                                SignupSerializer, UserSerializer)
-from ..reviews.models import Review
-# from ..titles.models import Title
+from .models import Review
 
 
 class UserViewSet(viewsets.ModelViewSet):
