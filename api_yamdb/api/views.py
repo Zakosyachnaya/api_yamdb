@@ -5,7 +5,7 @@ from .serializers import (CategorySerializer, GenreSerializer,
                           TitleReadSerializer, TitleWriteSerializer)
 from rest_framework.filters import SearchFilter
 from rest_framework.viewsets import ModelViewSet
-from django.filters.rest_framework import DjangoFilterBackend
+from django_filters.rest_framework import DjangoFilterBackend
 from api.filters import TitleFilter
 
 
@@ -28,7 +28,8 @@ class GenreViewSet(CreateDestroyListMixinSet):
 
 
 class TitleViewSet(ModelViewSet):
-    queryset = Title.objects.annotate(rating=Avg('reviews__score')).all()
+    queryset = Title.objects.all()
+    # queryset = Title.objects.annotate(rating=Avg('reviews__score')).all()
     # permission_classes =
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
