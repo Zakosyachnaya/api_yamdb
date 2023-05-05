@@ -29,14 +29,14 @@ class ReviewSerializer(serializers.ModelSerializer):
         model = Review
         fields = ['author', 'text', 'score']
 
-    # def validate_review(self, review):
-    #     user_review_exists = Review.objects.filter(
-    #         author=self.context.get('request').user,
-    #         title=,)
-    #     if user_review_exists:
-    #         raise serializers.ValidationError(
-    #             'Отзыв пользователя на это произведение уже существует')
-    #     return review
+    def validate_review(self, review):
+        user_review_exists = Review.objects.filter(
+            author=self.context.get('request').user,
+            title=self.context['view'].kwargs.get('title_id')).exists()
+        if user_review_exists:
+            raise serializers.ValidationError(
+                'Отзыв пользователя на это произведение уже существует')
+        return review
 
 
 class CommentSerializer(serializers.ModelSerializer):

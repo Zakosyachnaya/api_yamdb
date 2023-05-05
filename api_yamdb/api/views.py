@@ -9,7 +9,7 @@ from users.models import User
 
 from ..api.serializers import (CommentSerializer, ReviewSerializer,
                                SignupSerializer, UserSerializer)
-from reviews.models import Review
+from reviews.models import Review, Title
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -26,21 +26,20 @@ class SignupAPIView(APIView):
         serializer = self.serializer_class(data=user)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
 
-    # def perform_create(self, serializer):
-    #     title_id = self.kwargs.get('title_id')
-    #     title = get_object_or_404(Title, id=title_id)
-    #     serializer.save(author=self.request.user, title=title)
+    def perform_create(self, serializer):
+        title_id = self.kwargs.get('title_id')
+        title = get_object_or_404(Title, id=title_id)
+        serializer.save(author=self.request.user, title=title)
 
-    # def get_queryset(self):
-    #     # title = get_object_or_404(Title, pk=self.kwargs.get("title_id"))
-    #     # return title.reviews.all()
+    def get_queryset(self):
+        title = get_object_or_404(Title, pk=self.kwargs.get("title_id"))
+        return title.reviews.all()
 
 
 class CommentViewSet(viewsets.ModelViewSet):
