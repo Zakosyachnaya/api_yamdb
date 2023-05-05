@@ -9,7 +9,7 @@ from django.dispatch import receiver
 # from rest_framework_simplejwt.tokens import AccessToken
 
 
-class User(AbstractUser, PermissionsMixin):
+class User(AbstractUser):
     USER = 'user'
     ADMIN = 'admin'
     MODERATOR = 'moderator'
@@ -30,30 +30,34 @@ class User(AbstractUser, PermissionsMixin):
         choices=role_choices,
         default=USER,
     )
-    first_name = models.CharField(db_index=True, max_length=150)
-    last_name = models.CharField(db_index=True, max_length=150)
-    username = models.CharField(
-        db_index=True, max_length=150,
-        blank=False, null = False
-    )
-    email = models.EmailField(
-        db_index=True,  max_length=254,
-        blank=False, null = False
-    )
+    # first_name = models.CharField(db_index=True, max_length=150)
+    # last_name = models.CharField(db_index=True, max_length=150)
+    # username = models.CharField(
+    #     db_index=True, max_length=150,
+    #     blank=False, null = False,
+    #     unique=True
+    # # )
+    # email = models.EmailField(
+    #     db_index=True,  max_length=254,
+    #     blank=False, null = False
+    # )
 
     @property
-    def moder(self):
+    def moderator(self):
         return self.role == self.MODERATOR
     
     @property
-    def admn(self):
+    def admin(self):
         return self.role == self.ADMIN
 
+    @property
+    def user(self):
+        return self.role == self.USER
+
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['email',]
-    
+
     def __str__(self):
-        return self.email
+        return self.username 
 
     # class Meta:
     #     ordering = ('id',)
@@ -63,23 +67,3 @@ class User(AbstractUser, PermissionsMixin):
     #             name='unique_name_owner'
     #         )
     #     ]  
-
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    email_confirmed = models.BooleanField(default=False)
-
-@receiver(post_save, sender=User)
-def update_user_profile(sender, instance, created, **kwargs):
-    if created:
-        Profile.objects.create(user=instance)
-        instance.profile.save()
-
-    # def generate_jwt_token(self):
-    #     dt = datetime.now() + timedelta(days=1)
-
-    #     token = jwt.encode({
-    #         'id': self.pk,
-    #         'exp': int(dt.strftime('%s'))
-    #     }, settings.SECRET_KEY, algorithm='HS256')
-
-    #     return token.decode('utf-8')
