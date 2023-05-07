@@ -16,8 +16,3 @@ urlpatterns = [
     path('v1/auth/signup/', views.signup, name='signup'),
     path('v1/auth/token/', views.token, name='token'),
 ]
-
-if settings.DEBUG:
-    import debug_toolbar
-
-    urlpatterns += (path('__debug__/', include(debug_toolbar.urls)),)
