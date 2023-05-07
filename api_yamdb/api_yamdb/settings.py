@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'django_filters',
     'rest_framework',
     'rest_framework.authtoken',
+    'debug_toolbar',
     'api',
     'reviews',
 ]
@@ -136,3 +137,8 @@ AUTH_USER_MODEL = 'users.User'
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
+
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
+

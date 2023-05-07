@@ -29,11 +29,9 @@ from rest_framework.pagination import PageNumberPagination
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (IsAdmin,)
+    permission_classes = [IsAdmin, IsAuthenticated,]
     pagination_class = PageNumberPagination
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
-    # permission_classes_by_action = {'create': [AllowAny],
-    #                                 'list': [IsAdminUser]}
     search_fields = ('username',)
     lookup_field = 'username'
     http_method_names = ['get', 'post', 'patch', 'delete']
@@ -45,8 +43,6 @@ class UserViewSet(viewsets.ModelViewSet):
                 IsAuthenticated, IsOwnerOrReadOnlyPermission,
             )
     )
-    # @api_view(['GET', 'PATCH'])
-    # @permission_classes([IsAuthenticated])
     def me(self, request):
         user = get_object_or_404(User, username=self.request.user.username)
         if request.method == 'PATCH':
@@ -58,35 +54,17 @@ class UserViewSet(viewsets.ModelViewSet):
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
-        # if self.action == 'PATCH':
-        #     if request.user.admin:
-        #         serializer = UserSerializer(
-        #             request.user,
-        #             data=request.data,
-        #             patial=True
-        #         )
             return Response(serializer.errors, status=400)
         serializer = UserSerializer(request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-        # elif self.action == 'GET':
-        #     self.permission_classes = [IsOwnerOrReadOnlyPermission]
-        # return super(self.__class__, self).get_permissions()
-
-
 
 @api_view(['POST'])
 @permission_classes([AllowAny,])
 def signup(request):
     serializer = SignupSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-    # serializer.save()
-    email = serializer.data.get('email')
-    username = serializer.data.get('username')
-    # user, _ = User.objects.get_or_create(
-    #             email=email,
-    #             username=username
-    # )
+    email = serializer.validated_data.get('email')
+    username = serializer.validated_data.get('username')
     try:
         user, created = User.objects.get_or_create(
             username=username, email=email
@@ -94,7 +72,7 @@ def signup(request):
         
     except IntegrityError:
         return Response('Email уже существует', status=status.HTTP_400_BAD_REQUEST)
-    confirmation_code = default_token_generator.make_token(user)
+    confirmation_code = default_token_generator.make_token()
     print(confirmation_code)
     send_mail(
         subject='Ваш код подтверждения',
@@ -104,14 +82,6 @@ def signup(request):
         fail_silently=False,
     )
     return Response(serializer.data, status=status.HTTP_200_OK)
-
-# def get_tokens_for_user(user):
-#     refresh = RefreshToken.for_user(user)
-
-#     return {
-#         'refresh': str(refresh),
-#         'access': str(refresh.access_token),
-#     }
 
 @api_view(['POST'])
 @permission_classes([AllowAny,])
@@ -124,19 +94,6 @@ def token(request):
 
     user = get_object_or_404(User, username=username)
     if default_token_generator.check_token(user, confirmation_code):
-        token = AccessToken.get_token_for_user(user)
+        token = RefreshToken.for_user(user)
         return Response({token:'token'}, status=status.HTTP_200_OK)
-    user.auth_token.delete()
     return Response(serializer.errors, status=404)
-
-# class TokenView(APIView):
-#     authentication_classes = [SessionAuthentication, BasicAuthentication]
-#     permission_classes = [IsAuthenticated]
-#     # serializer_class = CustomTokenCreateSerializer
-
-#     def get(self, request, format=None):
-#         content = {
-#             'username ': str(request.username),
-#             'confirmation_code': str(request.confirmation_code),
-#             }
-#         return Response(content)

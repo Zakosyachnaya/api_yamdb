@@ -7,10 +7,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework_simplejwt.tokens import RefreshToken
 
-# from rest_framework_simplejwt.tokens import AccessToken
 
-
-class User(AbstractUser):
+class RolesModels:
     USER = 'user'
     ADMIN = 'admin'
     MODERATOR = 'moderator'
@@ -19,15 +17,17 @@ class User(AbstractUser):
         (ADMIN, 'admin'),
         (MODERATOR, 'moderator'),
     )
+class User(AbstractUser):
+    
     bio = models.TextField(
         'Биография',
         blank=True,
     )
     role = models.CharField(
         max_length=10,
-        choices=role_choices,
+        choices=RolesModels.role_choices,
         blank=True,
-        default='user',
+        default=RolesModels.USER,
     )
     username = models.CharField(
         max_length=150,
@@ -39,12 +39,15 @@ class User(AbstractUser):
         null=False, blank=False
     )
     class Meta:
-        ordering = ('role',)
+        ordering = ['id']
 
     @property
     def is_moderator(self):
-        return self.role == self.MODERATOR
+        return self.role == RolesModels.MODERATOR
     
     @property
     def is_admin(self):
-        return self.is_superuser or self.role == self.ADMIN
+        return self.is_superuser or self.role == RolesModels.ADMIN
+
+    def __str__(self) -> str:
+        return self.username
