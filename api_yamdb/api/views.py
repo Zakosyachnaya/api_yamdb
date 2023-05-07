@@ -14,6 +14,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework import filters
+from django.db import IntegrityError
 
 from users.models import User
 
@@ -82,11 +83,19 @@ def signup(request):
     # serializer.save()
     email = serializer.data.get('email')
     username = serializer.data.get('username')
-    user, _ = User.objects.get_or_create(
-                email=email,
-                username=username
-    )
+    # user, _ = User.objects.get_or_create(
+    #             email=email,
+    #             username=username
+    # )
+    try:
+        user, created = User.objects.get_or_create(
+            username=username, email=email
+        )
+        
+    except IntegrityError:
+        return Response('Email уже существует', status=status.HTTP_400_BAD_REQUEST)
     confirmation_code = default_token_generator.make_token(user)
+    print(confirmation_code)
     send_mail(
         subject='Ваш код подтверждения',
         message=confirmation_code,

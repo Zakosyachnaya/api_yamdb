@@ -19,9 +19,6 @@ class User(AbstractUser):
         (ADMIN, 'admin'),
         (MODERATOR, 'moderator'),
     )
-    # slug = models.SlugField(unique=True)
-    # id = models.AutoField(primary_key=True)
-    # is_active = models.BooleanField(default=True)
     bio = models.TextField(
         'Биография',
         blank=True,
@@ -32,8 +29,6 @@ class User(AbstractUser):
         blank=True,
         default='user',
     )
-    # first_name = models.CharField(db_index=True, max_length=150)
-    # last_name = models.CharField(db_index=True, max_length=150)
     username = models.CharField(
         max_length=150,
         null=False, blank=False,
@@ -43,13 +38,8 @@ class User(AbstractUser):
         max_length=254,
         null=False, blank=False
     )
-
-    # def tokens(self):
-    #     refresh = RefreshToken.for_user(self)
-    #     return{
-    #         'refresh':str(refresh),
-    #         'access':str(refresh.access_token)
-    #     }
+    class Meta:
+        ordering = ('role',)
 
     @property
     def is_moderator(self):
@@ -58,19 +48,3 @@ class User(AbstractUser):
     @property
     def is_admin(self):
         return self.is_superuser or self.role == self.ADMIN
-
-    # @property
-    # def is_user(self):
-    #     return self.role == self.USER
-
-    # def __str__(self):
-    #     return self.username
-
-    # class Meta:
-    #     ordering = ('id',)
-    #     constraints = [
-    #         models.CheckConstraint(
-    #             check=~models.Q(username__iexact='me'),
-    #             name='unique_name_owner'
-    #         )
-    #     ]  
