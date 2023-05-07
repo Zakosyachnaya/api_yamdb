@@ -45,17 +45,17 @@ class UserViewSet(viewsets.ModelViewSet):
     )
     def me(self, request):
         user = get_object_or_404(User, username=self.request.user.username)
-        if request.method == 'PATCH':
-            serializer = UserSerializer(
-                    request.user,
-                    data=request.data,
-                    partial=True
-                )
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=400)
-        serializer = UserSerializer(request.user)
+        # if request.method == 'PATCH':
+        #     serializer = UserSerializer(
+        #             request.user,
+        #             data=request.data,
+        #             partial=True
+        #         )
+        #     if serializer.is_valid():
+        #         serializer.save()
+        #         return Response(serializer.data, status=status.HTTP_200_OK)
+        #     return Response(serializer.errors, status=400)
+        # serializer = UserSerializer(request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
@@ -72,7 +72,7 @@ def signup(request):
         
     except IntegrityError:
         return Response('Email уже существует', status=status.HTTP_400_BAD_REQUEST)
-    confirmation_code = default_token_generator.make_token()
+    confirmation_code = default_token_generator.make_token(user)
     print(confirmation_code)
     send_mail(
         subject='Ваш код подтверждения',

@@ -62,17 +62,17 @@ class SignupSerializer(serializers.Serializer):
         if username == 'me':
             raise ValidationError('Username не может быть "me" или @#&^@%#')
 
-    def validate(self, attrs):
-        email, username = attrs.get('email'), attrs.get('username')
-        user = User.objects.filter(email=email, username=username)
-        # # # if user.exists():
-        # # #     token = RefreshToken.for_user(user) 
-        # #     return (str(token.access_token), attrs)
-        if User.objects.filter(email=email).exists():
-            raise ValidationError('Email уже существует')
-        if User.objects.filter(username=username).exists():
-            raise ValidationError('Username уже существует')
-        return attrs
+    # def validate(self, attrs):
+    #     email, username = attrs.get('email'), attrs.get('username')
+    #     user = User.objects.filter(email=email, username=username)
+    #     # # # if user.exists():
+    #     # # #     token = RefreshToken.for_user(user) 
+    #     # #     return (str(token.access_token), attrs)
+    #     if User.objects.filter(email=email).exists():
+    #         raise ValidationError('Email уже существует')
+    #     if User.objects.filter(username=username).exists():
+    #         raise ValidationError('Username уже существует')
+    #     return attrs
 
 
 class TokenSerializer(serializers.Serializer):
