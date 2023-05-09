@@ -19,7 +19,7 @@ from users.models import User
 from api.filters import TitleFilter
 
 from .mixins import CreateDestroyListMixinSet
-from .permissions import IsAdmin, IsAdminOrOwner
+from .permissions import IsAdmin, IsAdminOrOwner, ModeratorPermission
 from .serializers import (CategorySerializer, CommentSerializer,
                           GenreSerializer, ReviewSerializer, SignupSerializer,
                           SimpleUser, TitleReadSerializer,
@@ -96,6 +96,7 @@ def token(request):
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
+    permission_classes = [ModeratorPermission]
 
     def perform_create(self, serializer):
         title_id = self.kwargs.get('title_id')
@@ -109,6 +110,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
+    permission_classes = [ModeratorPermission]
 
     def perform_create(self, serializer):
         title_id = self.kwargs.get('title_id')
@@ -136,11 +138,11 @@ class GenreViewSet(CreateDestroyListMixinSet):
     permission_classes = [IsAdminOrOwner]
     filter_backends = (SearchFilter,)
     search_fields = ('name',)
-    lookup_fields = 'slug'
+    lookup_field = 'slug'
 
 
 class TitleViewSet(ModelViewSet):
-    queryset = Title.objects.all()
+    # queryset = Title.objects.all()
     queryset = Title.objects.annotate(rating=Avg('reviews__score')).all()
     permission_classes = [IsAdminOrOwner]
     filter_backends = (DjangoFilterBackend,)

@@ -99,7 +99,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = ['author', 'text', 'score']
+        fields = ['author', 'text', 'score', 'id', 'pub_date']
 
     def validate_review(self, review):
         user_review_exists = Review.objects.filter(
@@ -118,7 +118,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ['author', 'text', 'pub_date']
+        fields = ['author', 'text', 'pub_date', 'id']
 
 class CategorySerializer(serializers.ModelSerializer):
 

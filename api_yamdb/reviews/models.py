@@ -39,7 +39,7 @@ class Title(models.Model):
     )
     year = models.IntegerField(
         blank=True,
-        # validator=[MaxValueValidator(int(datetime.now().year))],
+        validators=[MaxValueValidator(int(datetime.now().year))],
         verbose_name='Год выпуска')
     description = models.TextField(
         blank=True,
@@ -88,6 +88,12 @@ class Review(models.Model):
         ordering = ['-pub_date']
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
+        # constraints = [
+        #     models.UniqueConstraint(
+        #         fields=('title', 'author'),
+        #         name='unique_review'
+        #     )
+        # ]
 
 
 class Comment(models.Model):
