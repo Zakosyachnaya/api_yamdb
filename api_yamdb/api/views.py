@@ -10,7 +10,7 @@ from rest_framework.filters import SearchFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from rest_framework_simplejwt.tokens import AccessToken
+from rest_framework_simplejwt.tokens import RefreshToken
 from reviews.models import Category, Genre, Review, Title
 from users.models import User
 
@@ -92,7 +92,7 @@ def token(request):
     username = serializer.data['username']
     user = get_object_or_404(User, username=username)
     if default_token_generator.check_token(user, confirmation_code):
-        token = AccessToken.for_user(user)
+        token = RefreshToken.for_user(user)
         return Response({str(token): 'token'}, status=status.HTTP_200_OK)
     return Response('Неправильный токен', status=400)
 
