@@ -1,6 +1,4 @@
-from datetime import datetime, timedelta
-
-from django.contrib.auth.models import AbstractUser, PermissionsMixin
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
@@ -13,8 +11,10 @@ class RolesModels:
         (ADMIN, 'Администратор'),
         (MODERATOR, 'Модератор')
     )
+
+
 class User(AbstractUser):
-    
+
     bio = models.TextField(
         'Биография',
         blank=True,
@@ -33,6 +33,7 @@ class User(AbstractUser):
         max_length=254,
         unique=True
     )
+
     class Meta:
         ordering = ['id']
 
@@ -42,7 +43,7 @@ class User(AbstractUser):
     @property
     def is_moderator(self):
         return self.role == RolesModels.MODERATOR
-    
+
     @property
     def is_admin(self):
         return self.is_superuser or self.role == RolesModels.ADMIN

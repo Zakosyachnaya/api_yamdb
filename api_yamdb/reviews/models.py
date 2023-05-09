@@ -2,6 +2,7 @@ from datetime import datetime
 
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+
 from users.models import User
 
 
@@ -66,7 +67,7 @@ class Title(models.Model):
 
     def __str__(self):
         return self.name
-    
+
 
 class Review(models.Model):
     title = models.ForeignKey(
@@ -88,12 +89,6 @@ class Review(models.Model):
         ordering = ['-pub_date']
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
-        # constraints = [
-        #     models.UniqueConstraint(
-        #         fields=('title', 'author'),
-        #         name='unique_review'
-        #     )
-        # ]
 
 
 class Comment(models.Model):
@@ -110,4 +105,3 @@ class Comment(models.Model):
         ordering = ['-pub_date']
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
-

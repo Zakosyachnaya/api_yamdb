@@ -1,15 +1,10 @@
 import re
 
-from django.contrib.auth.tokens import default_token_generator
-from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.exceptions import ValidationError
-from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-from rest_framework.validators import UniqueTogetherValidator, UniqueValidator
-from rest_framework_simplejwt.tokens import RefreshToken
-from reviews.models import Category, Comment, Genre, Review, Title
-from users.models import User
+from rest_framework.validators import UniqueValidator
 
+from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import User
 
 
@@ -25,7 +20,6 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('email', 'username', 'first_name',
                   'last_name', 'bio', 'role')
-
 
     def validate_username(self, value):
         if value.lower() == 'me':
@@ -45,10 +39,6 @@ class SignupSerializer(serializers.Serializer):
         max_length=254
     )
 
-    # class Meta:
-    #     fields = ('email', 'username')
-    #     model = User
-    
     def validate_username(self, value):
         if value.lower() == 'me':
             raise ValidationError('Username не может быть "me" или @#&^@%#')
@@ -56,23 +46,11 @@ class SignupSerializer(serializers.Serializer):
             raise ValidationError('Username не может быть "me" или @#&^@%#')
         return value
 
-    # def validate(self, attrs):
-    #     email, username = attrs.get('email'), attrs.get('usernamme')
-    #     # user = User.objects.filter(email=email, username=username)
-    #     if User.objects.filter(email=email).exists():
-    #         if not User.objects.filter(username=username).exists():
-    #             raise ValidationError('Email уже существует')
-    #     else:
-    #         return attrs
-    #     if User.objects.filter(email=data.get('email')).exists():
-    #         if not User.objects.filter(username=data.get('username')).exists():
-    #             raise ValidationError('Email уже существует')
-    #     return data
-
 
 class TokenSerializer(serializers.ModelSerializer):
     username = serializers.CharField(required=True)
     confirmation_code = serializers.CharField(required=True)
+
     class Meta:
         fields = ('username', 'confirmation_code')
         model = User
@@ -88,8 +66,8 @@ class SimpleUser(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('email', 'username', 'first_name',
-                'last_name', 'bio', 'role')
-        read_only_fields = ['role',]
+                  'last_name', 'bio', 'role')
+        read_only_fields = ['role', ]
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -119,6 +97,7 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ['author', 'text', 'pub_date', 'id']
+
 
 class CategorySerializer(serializers.ModelSerializer):
 
