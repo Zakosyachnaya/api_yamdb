@@ -77,13 +77,13 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = ['author', 'text', 'score', 'id', 'pub_date']
+        fields = ['author', 'text', 'score', 'id', 'pub_date', ]
 
-    def validate_review(self, review):
+    def validate(self, review):
         user_review_exists = Review.objects.filter(
             author=self.context.get('request').user,
             title=self.context['view'].kwargs.get('title_id')).exists()
-        if user_review_exists:
+        if self.instance is None and user_review_exists:
             raise serializers.ValidationError(
                 'Отзыв пользователя на это произведение уже существует')
         return review
@@ -116,7 +116,7 @@ class GenreSerializer(serializers.ModelSerializer):
 class TitleReadSerializer(serializers.ModelSerializer):
     category = CategorySerializer()
     genre = GenreSerializer(read_only=True, many=True)
-    # rating =
+    rating = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Title
