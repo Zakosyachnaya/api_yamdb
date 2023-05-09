@@ -145,7 +145,6 @@ class GenreViewSet(CreateDestroyListMixinSet):
 
 
 class TitleViewSet(ModelViewSet):
-    # queryset = Title.objects.all()
     queryset = Title.objects.annotate(rating=Avg('reviews__score')).all()
     permission_classes = [IsAdminOrOwner]
     filter_backends = (DjangoFilterBackend,)
