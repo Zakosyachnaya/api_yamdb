@@ -77,10 +77,10 @@ class Review(models.Model):
         User, on_delete=models.CASCADE, related_name='reviews'
     )
     text = models.TextField(max_length=3000)
-    score = models.IntegerField(
+    score = models.PositiveSmallIntegerField(
         validators=[
-            MinValueValidator(1),
-            MaxValueValidator(10)
+            MinValueValidator(1, message='Слишком маленькое значение'),
+            MaxValueValidator(10, message='Слишком большое значение')
         ]
     )
     pub_date = models.DateTimeField(auto_now_add=True)
