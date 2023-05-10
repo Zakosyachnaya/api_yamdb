@@ -23,9 +23,9 @@ class UserSerializer(serializers.ModelSerializer):
 
     def validate_username(self, value):
         if value.lower() == 'me':
-            raise ValidationError('Username не может быть "me" или @#&^@%#')
+            raise ValidationError('Username не может быть "me"')
         if not re.match(r'[\w.@+-]+\Z', value):
-            raise ValidationError('Username не может быть "me" или @#&^@%#')
+            raise ValidationError('Username не может быть @#&^@%#')
         return value
 
 
@@ -41,9 +41,9 @@ class SignupSerializer(serializers.Serializer):
 
     def validate_username(self, value):
         if value.lower() == 'me':
-            raise ValidationError('Username не может быть "me" или @#&^@%#')
+            raise ValidationError('Username не может быть "me"')
         if not re.match(r'[\w.@+-]+\Z', value):
-            raise ValidationError('Username не может быть "me" или @#&^@%#')
+            raise ValidationError('Username не может быть @#&^@%#')
         return value
 
 
@@ -67,7 +67,7 @@ class SimpleUser(serializers.ModelSerializer):
         model = User
         fields = ('email', 'username', 'first_name',
                   'last_name', 'bio', 'role')
-        read_only_fields = ['role', ]
+        read_only_fields = ('role',)
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -77,13 +77,15 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = ['author', 'text', 'score', 'id', 'pub_date', ]
+        fields = ('author', 'text', 'score', 'id', 'pub_date')
 
     def validate(self, review):
         user_review_exists = Review.objects.filter(
             author=self.context.get('request').user,
             title=self.context['view'].kwargs.get('title_id')).exists()
-        if self.instance is None and user_review_exists:
+        if (self.context['request'].method == 'POST'
+                and self.instance is None
+                and user_review_exists):
             raise serializers.ValidationError(
                 'Отзыв пользователя на это произведение уже существует')
         return review
@@ -96,7 +98,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ['author', 'text', 'pub_date', 'id']
+        fields = ('author', 'text', 'pub_date', 'id')
 
 
 class CategorySerializer(serializers.ModelSerializer):
