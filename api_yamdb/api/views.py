@@ -60,7 +60,9 @@ class UserViewSet(viewsets.ModelViewSet):
                     request.user, data=request.data, partial=True
                 )
             else:
-                serializer = SimpleUser(request.user, data=request.data, partial=True)
+                serializer = SimpleUser(
+                    request.user, data=request.data, partial=True
+                )
             serializer.is_valid(raise_exception=True)
             serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -74,9 +76,13 @@ def signup(request):
     email = serializer.validated_data["email"]
     username = serializer.validated_data["username"]
     try:
-        user, created = User.objects.get_or_create(username=username, email=email)
+        user, created = User.objects.get_or_create(
+            username=username, email=email
+        )
     except IntegrityError:
-        return Response("Email уже существует", status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            "Email уже существует", status=status.HTTP_400_BAD_REQUEST
+        )
     confirmation_code = default_token_generator.make_token(user)
     send_mail(
         subject="Ваш код подтверждения",

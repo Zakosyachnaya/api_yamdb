@@ -18,7 +18,11 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("email", "username", "first_name", "last_name", "bio", "role")
+        fields = (
+            "email", "username",
+            "first_name", "last_name",
+            "bio", "role",
+        )
 
     def validate_username(self, value):
         if value.lower() == "me":
@@ -56,24 +60,28 @@ class SimpleUser(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("email", "username", "first_name", "last_name", "bio", "role")
-        read_only_fields = [
-            "role",
-        ]
+        fields = (
+            "email", "username",
+            "first_name", "last_name",
+            "bio", "role"
+        )
+        read_only_fields = ("role",)
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-    author = serializers.SlugRelatedField(slug_field="username", read_only=True)
+    author = serializers.SlugRelatedField(
+        slug_field="username", read_only=True
+    )
 
     class Meta:
         model = Review
-        fields = [
+        fields = (
             "author",
             "text",
             "score",
             "id",
             "pub_date",
-        ]
+        )
 
     def validate(self, review):
         user_review_exists = Review.objects.filter(
@@ -90,11 +98,13 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    author = serializers.SlugRelatedField(slug_field="username", read_only=True)
+    author = serializers.SlugRelatedField(
+        slug_field="username", read_only=True
+    )
 
     class Meta:
         model = Comment
-        fields = ["author", "text", "pub_date", "id"]
+        fields = ("author", "text", "pub_date", "id")
 
 
 class CategorySerializer(serializers.ModelSerializer):
