@@ -80,15 +80,17 @@ class ReviewSerializer(serializers.ModelSerializer):
         fields = ['author', 'text', 'score', 'id', 'pub_date', ]
 
     def validate(self, review):
-        user_review_exists = Review.objects.filter(
-            author=self.context.get('request').user,
-            title=self.context['view'].kwargs.get('title_id')).exists()
-        if (self.context['request'].method == 'POST'
-                and self.instance is None
-                and user_review_exists):
-            raise serializers.ValidationError(
-                'Отзыв пользователя на это произведение уже существует')
-        return review
+        if self.context['request'].method != 'POST':
+            return review
+        else:
+            user_review_exists = Review.objects.filter(
+                author=self.context.get('request').user,
+                title=self.context['view'].kwargs.get('title_id')).exists()
+            if user_review_exists:
+                raise serializers.ValidationError(
+                    'Отзыв пользователя на это произведение уже существует')
+            else:
+                return review
 
 
 class CommentSerializer(serializers.ModelSerializer):
