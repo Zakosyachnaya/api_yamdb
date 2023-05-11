@@ -3,39 +3,29 @@ from django.db import models
 
 
 class RolesModels:
-    USER = 'user'
-    ADMIN = 'admin'
-    MODERATOR = 'moderator'
+    USER = "user"
+    ADMIN = "admin"
+    MODERATOR = "moderator"
     choices = (
-        (USER, 'Пользователь'),
-        (ADMIN, 'Администратор'),
-        (MODERATOR, 'Модератор')
+        (USER, "Пользователь"),
+        (ADMIN, "Администратор"),
+        (MODERATOR, "Модератор"),
     )
 
 
 class User(AbstractUser):
-
     bio = models.TextField(
-        'Биография',
+        "Биография",
         blank=True,
     )
     role = models.CharField(
-        max_length=10,
-        choices=RolesModels.choices,
-        default=RolesModels.USER
+        max_length=10, choices=RolesModels.choices, default=RolesModels.USER
     )
-    username = models.CharField(
-        max_length=150,
-        unique=True,
-        null=False
-    )
-    email = models.EmailField(
-        max_length=254,
-        unique=True
-    )
+    username = models.CharField(max_length=150, unique=True, null=False)
+    email = models.EmailField(max_length=254, unique=True)
 
     class Meta:
-        ordering = ('id',)
+        ordering = ("id",)
 
     def __str__(self):
         return self.username

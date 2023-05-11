@@ -5,19 +5,24 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('reviews', '0001_initial'),
+        ("reviews", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='title',
-            name='year',
-            field=models.IntegerField(blank=True, validators=[django.core.validators.MaxValueValidator(2023)], verbose_name='Год выпуска'),
+            model_name="title",
+            name="year",
+            field=models.IntegerField(
+                blank=True,
+                validators=[django.core.validators.MaxValueValidator(2023)],
+                verbose_name="Год выпуска",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='review',
-            constraint=models.UniqueConstraint(fields=('author', 'title'), name='unique_author_review'),
+            model_name="review",
+            constraint=models.UniqueConstraint(
+                fields=("author", "title"), name="unique_author_review"
+            ),
         ),
     ]
