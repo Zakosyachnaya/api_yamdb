@@ -6,9 +6,7 @@ from .validators import my_year_validator
 
 
 class Category(models.Model):
-    name = models.CharField(
-        max_length=256, verbose_name="Название категории"
-    )
+    name = models.CharField(max_length=256, verbose_name="Название категории")
     slug = models.SlugField(unique=True, verbose_name="Слаг категории")
 
     class Meta:
@@ -32,19 +30,12 @@ class Genre(models.Model):
 
 
 class Title(models.Model):
-    name = models.CharField(
-        max_length=256, verbose_name="Название произведения"
-    )
+    name = models.CharField(max_length=256, verbose_name="Название произведения")
     year = models.PositiveSmallIntegerField(
-        blank=True, validators=[my_year_validator],
-        verbose_name="Год выпуска"
+        blank=True, validators=[my_year_validator], verbose_name="Год выпуска"
     )
-    description = models.TextField(
-        blank=True, null=True, verbose_name="Описание"
-    )
-    genre = models.ManyToManyField(
-        Genre, related_name="titles", verbose_name="Жанр"
-    )
+    description = models.TextField(blank=True, null=True, verbose_name="Описание")
+    genre = models.ManyToManyField(Genre, related_name="titles", verbose_name="Жанр")
     category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,
@@ -63,12 +54,8 @@ class Title(models.Model):
 
 
 class Review(models.Model):
-    title = models.ForeignKey(
-        Title, on_delete=models.CASCADE, related_name="reviews"
-    )
-    author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="reviews"
-    )
+    title = models.ForeignKey(Title, on_delete=models.CASCADE, related_name="reviews")
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reviews")
     text = models.TextField(max_length=3000)
     score = models.PositiveSmallIntegerField(
         validators=[
@@ -91,9 +78,7 @@ class Review(models.Model):
 
 
 class Comment(models.Model):
-    author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="comments"
-    )
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
     review = models.ForeignKey(
         Review, on_delete=models.CASCADE, related_name="comments"
     )
